@@ -42,27 +42,26 @@ public class WeatherContoller {
         String cityName = weather.getLocation().getName();
         String weatherCondition = weather.getCurrent().getCondition().getText();
 
-       // WeatherInfo weatherInfo = new WeatherInfo(cityName, weatherCondition);
-
-      //  String jsonWeatherInfo = objectMapper.writeValueAsString(weatherInfo);//Serijalizacija
+        // WeatherInfo weatherInfo = new WeatherInfo(cityName, weatherCondition);
+        // String jsonWeatherInfo = objectMapper.writeValueAsString(weatherInfo); //serijalizacija
 
         String filePath = "weatherInfo.txt";
         Path outputPath = Paths.get(filePath);
 
-        if(!Files.exists(outputPath)){
+        if (!Files.exists(outputPath)) {
             Files.createFile(outputPath);
         }
 
-        try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardOpenOption.APPEND)){
+        try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardOpenOption.APPEND)) {
             writer.write("City: " + cityName);
             writer.newLine();
             writer.write("Weather: " + weatherCondition);
             writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         System.out.println("Weather information has been written to the file: " + filePath);
-
-
 
 
 //        try (final FileOutputStream fout = new FileOutputStream("weather.txt");
