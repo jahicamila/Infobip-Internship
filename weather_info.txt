@@ -1,2 +1,0 @@
-City: Sarajevo
-Weather: Partly cloudy
