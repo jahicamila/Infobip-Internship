@@ -2,10 +2,15 @@ package com.example.weather_station;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import java.nio.file.*;
 
@@ -20,6 +25,10 @@ public class WeatherContoller {
 
     @GetMapping()
     public static void main(String[] args) throws IOException, InterruptedException {
+
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(this::updateWeatherData, 0, 1, TimeUnit.HOURS);
+
 
         HttpClient client = HttpClient.newHttpClient();
 
@@ -42,10 +51,10 @@ public class WeatherContoller {
         String cityName = weather.getLocation().getName();
         String weatherCondition = weather.getCurrent().getCondition().getText();
 
-        // WeatherInfo weatherInfo = new WeatherInfo(cityName, weatherCondition);
-        // String jsonWeatherInfo = objectMapper.writeValueAsString(weatherInfo); //serijalizacija
+//       WeatherInfo weatherInfo = new WeatherInfo(cityName, weatherCondition);
+//       String jsonWeatherInfo = objectMapper.writeValueAsString(weatherInfo); //serijalizacija
 
-        String filePath = "weatherInfo.txt";
+        String filePath = "weather_info.txt";
         Path outputPath = Paths.get(filePath);
 
         if (!Files.exists(outputPath)) {
@@ -64,12 +73,14 @@ public class WeatherContoller {
         System.out.println("Weather information has been written to the file: " + filePath);
 
 
-//        try (final FileOutputStream fout = new FileOutputStream("weather.txt");
-//             final ObjectOutputStream out = new ObjectOutputStream(fout)) {
-//            out.writeObject(weather);
-//            out.flush();
+//        try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filePath))){
+//            outputStream.writeObject(cityName);
+//            outputStream.writeObject(weatherCondition);
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+//
+//        System.out.println("Weather information has been written to the file: " + filePath);
     }
 }
+

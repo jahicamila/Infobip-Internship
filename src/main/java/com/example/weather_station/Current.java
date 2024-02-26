@@ -2,8 +2,10 @@ package com.example.weather_station;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Current {
+public class Current implements Serializable {
     private long last_updated_epoch;
     private String last_updated;
     private double temp_c;

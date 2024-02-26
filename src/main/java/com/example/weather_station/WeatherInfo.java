@@ -2,13 +2,16 @@
 //
 //import lombok.Data;
 //
+//import java.io.Serializable;
+//
 //@Data
-//public class WeatherInfo {
+//public class WeatherInfo implements Serializable {
 //    private String cityName;
 //    private String weatherCondition;
 //
-//    public WeatherInfo(String cityName, String weatherCondition){
+//    public WeatherInfo(String cityName, String weatherCondition) {
 //        this.cityName = cityName;
 //        this.weatherCondition = weatherCondition;
 //    }
+//
 //}

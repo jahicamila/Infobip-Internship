@@ -1,6 +1,0 @@
-City: Sarajevo
-Weather: Light rain
-City: Sarajevo
-Weather: Mist
-City: Sarajevo
-Weather: Mist
