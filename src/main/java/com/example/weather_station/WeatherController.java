@@ -41,26 +41,18 @@ public class WeatherController {
 
         HttpResponse<String> response = client.send(request,
                 HttpResponse.BodyHandlers.ofString());
-//        System.out.printf("Status %s \n", response.statusCode());
-//        System.out.printf("Response %s \n", response.body());
 
         ObjectMapper objectMapper = new ObjectMapper();
         Weather weather = objectMapper.readValue(response.body(), Weather.class);
-
-//        System.out.println("City: " + weather.getLocation().getName());
-//        System.out.println("Weather: " + weather.getCurrent().getCondition().getText());
-
-//        List<Weather> weathers = new ArrayList<>();
-//        weathers.add(weather);
 
         String cityName = weather.getLocation().getName();
         String weatherCondition = weather.getCurrent().getCondition().getText();
         return new WeatherInfo(cityName, weatherCondition);
     }
 
-    private void writeWeatherData(WeatherInfo weather) {
+    private void writeWeatherData(WeatherInfo weatherInfo) {
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filepath))) {
-            outputStream.writeObject(weather);
+            outputStream.writeObject(weatherInfo);
             System.out.println("Weather information has been written to the file: " + filepath);
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,8 +64,9 @@ public class WeatherController {
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filepath))) {
             while (true) {
                 try {
-                    WeatherInfo weather = (WeatherInfo)inputStream.readObject();
-                    weathers.add(weather);
+                    WeatherInfo weatherInfo = (WeatherInfo) inputStream.readObject();
+                    weathers.add(weatherInfo);
+                    System.out.println(weathers.size());
                 } catch (EOFException e) {
                     break;
                 }
@@ -86,23 +79,6 @@ public class WeatherController {
 }
 
 
-//        String filePath = "weather_info.json";
-//        Path outputPath = Paths.get(filePath);
-//
-//        if (!Files.exists(outputPath)) {
-//            Files.createFile(outputPath);
-//        }
-
-//        try (BufferedWriter writer = Files.newBufferedWriter(outputPath, StandardOpenOption.APPEND)) {
-//            writer.write("City: " + cityName);
-//            writer.newLine();
-//            writer.write("Weather: " + weatherCondition);
-//            writer.newLine();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        System.out.println("Weather information has been written to the file: " + filePath);
 
 
 
