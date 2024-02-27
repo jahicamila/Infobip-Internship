@@ -28,7 +28,7 @@ public class WeatherController {
     public List<WeatherInfo> getWeatherData() {
         return readWeatherData();
     }
-    @Scheduled(fixedRate = 20000)
+    @Scheduled(fixedRate = 3600000)
     public void updateWeatherData(){
         try {
             WeatherInfo weather = fetchWeatherData();
@@ -72,7 +72,7 @@ public class WeatherController {
     private List<WeatherInfo> readWeatherData() {
         List<WeatherInfo> weathers = new ArrayList<>();
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filepath))) {
-            LocalDateTime twoHoursAgo = LocalDateTime.now().minusSeconds(20);
+            LocalDateTime twoHoursAgo = LocalDateTime.now().minusHours(2);
             while (true) {
                 try {
                     WeatherInfo weatherInfo = (WeatherInfo) inputStream.readObject();
