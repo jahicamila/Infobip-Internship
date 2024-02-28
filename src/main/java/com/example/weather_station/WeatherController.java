@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableScheduling
 public class WeatherController {
 
+    private static final Logger logger = LoggerFactory.getLogger(WeatherController.class);
     private static final String filepath = "weather_info.ser";
 
     private final List<WeatherInfo> weatherInfoList = new ArrayList<>();
@@ -39,50 +42,64 @@ public class WeatherController {
     @Scheduled(fixedRate = 20000)
     public void updateWeatherData() {
         try {
-            WeatherInfo weather = fetchWeatherData();
-            writeWeatherData(weather);
+            fetchWeatherData();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    private WeatherInfo fetchWeatherData() throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
+    private void fetchWeatherData() throws IOException, InterruptedException {
+        logger.debug("Fetching weather data from API...");
 
-        HttpRequest request = HttpRequest
-                .newBuilder()
-                .uri(URI.create("http://api.weatherapi.com/v1/current.json?key=79dcb7239b0b4d7daa8112246242202&q=Sarajevo"))
-                .build();
+        try (HttpClient client = HttpClient.newHttpClient()) {
 
-        HttpResponse<String> response = client.send(request,
-                HttpResponse.BodyHandlers.ofString());
+            HttpRequest request = HttpRequest
+                    .newBuilder()
+                    .uri(URI.create("http://api.weatherapi.com/v1/current.json?key=79dcb7239b0b4d7daa8112246242202&q=Sarajevo"))
+                    .build();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Weather weather = objectMapper.readValue(response.body(), Weather.class);
+            HttpResponse<String> response = client.send(request,
+                    HttpResponse.BodyHandlers.ofString());
 
-        String cityName = weather.getLocation().getName();
-        String weatherCondition = weather.getCurrent().getCondition().getText();
-        LocalDateTime currentTime = LocalDateTime.now();
+            ObjectMapper objectMapper = new ObjectMapper();
+            Weather weather = objectMapper.readValue(response.body(), Weather.class);
 
-        return new WeatherInfo(cityName, weatherCondition, currentTime);
+
+            String cityName = weather.getLocation().getName();
+            String weatherCondition = weather.getCurrent().getCondition().getText();
+            LocalDateTime currentTime = LocalDateTime.now();
+
+            writeWeatherData(new WeatherInfo(cityName, weatherCondition, currentTime));
+
+        } catch (IOException e) {
+            logger.error("Error when fetching weather data from API: " + e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 
-
     private void writeWeatherData(WeatherInfo weatherInfo) {
+        logger.debug("Writing weather data to a file...");
+
         weatherInfoList.add(weatherInfo);
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filepath))) {
             outputStream.writeObject(weatherInfoList);
-            System.out.println("Weather information has been written to the file: " + filepath);
+            logger.debug("Weather information has been written to the file: " + filepath);
         } catch (IOException e) {
+            logger.error("Error when writing weather data to file: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     private List<WeatherInfo> readWeatherData() {
+        logger.debug("Reading weather data from file...");
+
         List<WeatherInfo> weathers = new ArrayList<>();
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filepath))) {
-                weathers = (List<WeatherInfo>) inputStream.readObject();
+            weathers = (List<WeatherInfo>) inputStream.readObject();
+            logger.debug("Weather data has been read from the file: " + filepath);
         } catch (IOException | ClassNotFoundException e) {
+            logger.error("Error when reading weather data from file: " + e.getMessage());
             e.printStackTrace();
         }
         return weathers;
