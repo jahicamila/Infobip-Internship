@@ -62,6 +62,8 @@ public class WeatherController {
             HttpResponse<String> response = client.send(request,
                     HttpResponse.BodyHandlers.ofString());
 
+            logger.info("API Response: {}", response.body());
+
             ObjectMapper objectMapper = new ObjectMapper();
             Weather weather = objectMapper.readValue(response.body(), Weather.class);
 
