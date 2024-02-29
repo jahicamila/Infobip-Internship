@@ -86,12 +86,12 @@ public class WeatherController {
             outputStream.writeObject(weatherInfoList);
             logger.debug("Weather information has been written to the file: " + filepath);
         } catch (IOException e) {
-            logger.error("Error when writing weather data to file: " + e.getMessage());
+            logger.error("Error when writing weather data to the file: " + e.getMessage());
         }
     }
 
     private List<WeatherInfo> readWeatherData() {
-        logger.debug("Reading weather data from file...");
+        logger.debug("Reading weather data from the file...");
 
         List<WeatherInfo> weathers = new ArrayList<>();
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filepath))) {
@@ -102,7 +102,7 @@ public class WeatherController {
             }
             logger.debug("Weather data has been read from the file: " + filepath);
         } catch (IOException | ClassNotFoundException e) {
-            logger.error("Error when reading weather data from file: " + e.getMessage());
+            logger.error("Error when reading weather data from the file: " + e.getMessage());
         }
         return weathers;
     }
