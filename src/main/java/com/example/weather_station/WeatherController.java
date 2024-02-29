@@ -31,6 +31,7 @@ public class WeatherController {
 
     @GetMapping
     public List<WeatherInfo> getWeatherData() {
+        logger.info("/GET/weather");
         List<WeatherInfo> allWeatherData = readWeatherData();
         if (allWeatherData.size() > 2) {
             return allWeatherData.subList(allWeatherData.size() - 2, allWeatherData.size());
@@ -39,12 +40,12 @@ public class WeatherController {
         }
     }
 
-    @Scheduled(fixedRate = 20000)
+    @Scheduled(fixedRate = 10000)
     public void updateWeatherData() {
         try {
             fetchWeatherData();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Error when updating weather data from API: " + e.getMessage());
         }
     }
 
@@ -73,7 +74,6 @@ public class WeatherController {
 
         } catch (IOException e) {
             logger.error("Error when fetching weather data from API: " + e.getMessage());
-            e.printStackTrace();
         }
 
     }
@@ -86,27 +86,24 @@ public class WeatherController {
             outputStream.writeObject(weatherInfoList);
             logger.debug("Weather information has been written to the file: " + filepath);
         } catch (IOException e) {
-            logger.error("Error when writing weather data to file: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error when writing weather data to the file: " + e.getMessage());
         }
     }
 
     private List<WeatherInfo> readWeatherData() {
-        logger.debug("Reading weather data from file...");
+        logger.debug("Reading weather data from the file...");
 
         List<WeatherInfo> weathers = new ArrayList<>();
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filepath))) {
-            weathers = (List<WeatherInfo>) inputStream.readObject();
+//            weathers = (List<WeatherInfo>) inputStream.readObject();
+            Object object = inputStream.readObject();
+            if(object instanceof ArrayList<?>){
+                weathers = (ArrayList<WeatherInfo>) object;
+            }
             logger.debug("Weather data has been read from the file: " + filepath);
         } catch (IOException | ClassNotFoundException e) {
-            logger.error("Error when reading weather data from file: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error when reading weather data from the file: " + e.getMessage());
         }
         return weathers;
     }
 }
-
-
-
-
-
