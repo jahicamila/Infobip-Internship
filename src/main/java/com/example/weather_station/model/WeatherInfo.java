@@ -1,9 +1,7 @@
-package com.example.weather_station;
+package com.example.weather_station.model;
 
 import lombok.Data;
-
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data

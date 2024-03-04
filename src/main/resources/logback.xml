@@ -31,6 +31,7 @@
         </filter>
     </appender>
 
+
     <logger name="com.example.weather_station" level="ERROR">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="ERROR_FILE"/>
