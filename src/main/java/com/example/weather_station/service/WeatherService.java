@@ -32,7 +32,7 @@ public class WeatherService {
 
     private static final List<WeatherInfo> weatherInfoList = new ArrayList<>();
 
-    public List<WeatherInfo> getWeatherData(){
+    public List<WeatherInfo> getWeatherData() {
         List<WeatherInfo> allWeatherData = readWeatherData();
         if (allWeatherData.size() > 2) {
             return allWeatherData.subList(allWeatherData.size() - 2, allWeatherData.size());
@@ -40,6 +40,7 @@ public class WeatherService {
             return allWeatherData;
         }
     }
+
     public static WeatherInfo fetchWeatherData() throws IOException, InterruptedException {
         WeatherInfo weatherInfo = null;
         try (HttpClient client = HttpClient.newHttpClient()) {

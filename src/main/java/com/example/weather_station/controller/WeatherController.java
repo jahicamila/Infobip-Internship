@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
 @RestController
@@ -16,7 +17,7 @@ public class WeatherController {
     private static final Logger logger = LoggerFactory.getLogger(WeatherController.class);
     private final WeatherService weatherService;
 
-    public WeatherController(WeatherService weatherService){
+    public WeatherController(WeatherService weatherService) {
         this.weatherService = weatherService;
     }
 
@@ -25,10 +26,4 @@ public class WeatherController {
         logger.info("/GET/weather");
         return weatherService.getWeatherData();
     }
-
-
-
-
-
-
 }
