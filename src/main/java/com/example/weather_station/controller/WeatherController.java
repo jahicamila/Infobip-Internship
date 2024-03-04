@@ -26,4 +26,6 @@ public class WeatherController {
         logger.info("/GET/weather");
         return weatherService.getWeatherData();
     }
+
+
 }

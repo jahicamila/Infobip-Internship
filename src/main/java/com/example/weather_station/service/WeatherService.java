@@ -25,12 +25,12 @@ public class WeatherService {
     private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
 
     @Value("${weather.filepath}")
-    private static String filepath;
+    private String filepath;
 
     @Value("${weather.api.uri}")
-    private static String weatherApiURI;
+    private String weatherApiURI;
 
-    private static final List<WeatherInfo> weatherInfoList = new ArrayList<>();
+    private final List<WeatherInfo> weatherInfoList = new ArrayList<>();
 
     public List<WeatherInfo> getWeatherData() {
         List<WeatherInfo> allWeatherData = readWeatherData();
@@ -41,7 +41,7 @@ public class WeatherService {
         }
     }
 
-    public static WeatherInfo fetchWeatherData() throws IOException, InterruptedException {
+    public WeatherInfo fetchWeatherData() throws IOException, InterruptedException {
         WeatherInfo weatherInfo = null;
         try (HttpClient client = HttpClient.newHttpClient()) {
 
@@ -70,7 +70,7 @@ public class WeatherService {
         return weatherInfo;
     }
 
-    public static void writeWeatherData(WeatherInfo weatherInfo) {
+    public void writeWeatherData(WeatherInfo weatherInfo) {
         weatherInfoList.add(weatherInfo);
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filepath))) {
             outputStream.writeObject(weatherInfoList);

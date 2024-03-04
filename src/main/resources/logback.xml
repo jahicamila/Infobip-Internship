@@ -32,13 +32,15 @@
     </appender>
 
 
-    <logger name="com.example.weather_station" level="ERROR">
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger name="com.example.weather_station" level="ERROR">
         <appender-ref ref="ERROR_FILE"/>
     </logger>
 
     <logger name="com.example.weather_station" level="INFO">
-        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="INFO_FILE"/>
     </logger>
 
