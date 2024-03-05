@@ -15,7 +15,8 @@ import java.io.IOException;
 @EnableScheduling
 public class ScheduledWeather {
 
-    private static final Logger logger = LoggerFactory.getLogger(ScheduledWeather.class);
+    private static final Logger logger1 = LoggerFactory.getLogger("error");
+    private static final Logger logger2 = LoggerFactory.getLogger("info");
 
     private final WeatherService weatherService;
 
@@ -29,7 +30,7 @@ public class ScheduledWeather {
             WeatherInfo weatherInfo = weatherService.fetchWeatherData();
             weatherService.writeWeatherData(weatherInfo);
         } catch (IOException | InterruptedException e) {
-            logger.error("Error when updating weather data from API: " + e.getMessage());
+            logger1.error("Error when updating weather data from API: " + e.getMessage());
         }
     }
 }

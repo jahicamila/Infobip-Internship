@@ -22,7 +22,8 @@ import java.util.List;
 @Service
 public class WeatherService {
 
-    private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
+    private static final Logger logger1 = LoggerFactory.getLogger("error");
+    private static final Logger logger2 = LoggerFactory.getLogger("info");
 
     @Value("${weather.filepath}")
     private String filepath;
@@ -32,14 +33,6 @@ public class WeatherService {
 
     private final List<WeatherInfo> weatherInfoList = new ArrayList<>();
 
-    public List<WeatherInfo> getWeatherData() {
-        List<WeatherInfo> allWeatherData = readWeatherData();
-        if (allWeatherData.size() > 2) {
-            return allWeatherData.subList(allWeatherData.size() - 2, allWeatherData.size());
-        } else {
-            return allWeatherData;
-        }
-    }
 
     public WeatherInfo fetchWeatherData() throws IOException, InterruptedException {
         WeatherInfo weatherInfo = null;
@@ -53,7 +46,7 @@ public class WeatherService {
             HttpResponse<String> response = client.send(request,
                     HttpResponse.BodyHandlers.ofString());
 
-            logger.info("API Response: {}", response.body());
+            logger2.info("API Response: {}", response.body());
 
             ObjectMapper objectMapper = new ObjectMapper();
             Weather weather = objectMapper.readValue(response.body(), Weather.class);
@@ -65,7 +58,7 @@ public class WeatherService {
             weatherInfo = new WeatherInfo(cityName, weatherCondition, currentTime);
 
         } catch (IOException e) {
-            logger.error("Error when fetching weather data from API: " + e.getMessage());
+            logger1.error("Error when fetching weather data from API: " + e.getMessage());
         }
         return weatherInfo;
     }
@@ -75,7 +68,7 @@ public class WeatherService {
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filepath))) {
             outputStream.writeObject(weatherInfoList);
         } catch (IOException e) {
-            logger.error("Error when writing weather data to the file: " + e.getMessage());
+            logger1.error("Error when writing weather data to the file: " + e.getMessage());
         }
     }
 
@@ -88,7 +81,7 @@ public class WeatherService {
                 weathers = (ArrayList<WeatherInfo>) object;
             }
         } catch (IOException | ClassNotFoundException e) {
-            logger.error("Error when reading weather data from the file: " + e.getMessage());
+            logger1.error("Error when reading weather data from the file: " + e.getMessage());
         }
         return weathers;
     }
