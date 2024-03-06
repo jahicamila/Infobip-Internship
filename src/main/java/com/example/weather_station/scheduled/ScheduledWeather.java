@@ -16,7 +16,6 @@ import java.io.IOException;
 public class ScheduledWeather {
 
     private static final Logger logger1 = LoggerFactory.getLogger("error");
-    private static final Logger logger2 = LoggerFactory.getLogger("info");
 
     private final WeatherService weatherService;
 

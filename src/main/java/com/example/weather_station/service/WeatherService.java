@@ -1,21 +1,19 @@
 package com.example.weather_station.service;
 
 import com.example.weather_station.model.WeatherInfo;
-import org.springframework.beans.factory.annotation.Value;
+import com.example.weather_station.model.Weather;
+import io.swagger.client.ApiClient;
+import io.swagger.client.ApiException;
+import io.swagger.client.Configuration;
+import io.swagger.client.api.ApisApi;
+import io.swagger.client.auth.ApiKeyAuth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.example.weather_station.model.Weather;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.threeten.bp.LocalDateTime;
 
 import java.io.*;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,25 +29,28 @@ public class WeatherService {
     @Value("${weather.api.uri}")
     private String weatherApiURI;
 
+    @Value("${weather.api.key}")
+    private String weatherApiKey;
+
     private final List<WeatherInfo> weatherInfoList = new ArrayList<>();
 
 
-    public WeatherInfo fetchWeatherData() throws IOException, InterruptedException {
+    public WeatherInfo fetchWeatherData()  throws IOException, InterruptedException{
         WeatherInfo weatherInfo = null;
-        try (HttpClient client = HttpClient.newHttpClient()) {
+        try {
+            ApiClient apiClient = new ApiClient();
+            apiClient.setBasePath(weatherApiURI);
+            ApiKeyAuth ApiKeyAuth = (ApiKeyAuth) apiClient.getAuthentication("ApiKeyAuth");
+            ApiKeyAuth.setApiKey(weatherApiKey);
+//            ApiKeyAuth.setApiKeyPrefix("Token");
 
-            HttpRequest request = HttpRequest
-                    .newBuilder()
-                    .uri(URI.create(weatherApiURI))
-                    .build();
+            ApisApi apiInstance = new ApisApi(apiClient);
+            String q = "Sarajevo";
+            String lang = "en";
 
-            HttpResponse<String> response = client.send(request,
-                    HttpResponse.BodyHandlers.ofString());
+            Weather weather = (Weather) apiInstance.realtimeWeather(q, lang);
 
-            logger2.info("API Response: {}", response.body());
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            Weather weather = objectMapper.readValue(response.body(), Weather.class);
+            //logger2.info("API Response: {}", weatherResponse.body());
 
             String cityName = weather.getLocation().getName();
             String weatherCondition = weather.getCurrent().getCondition().getText();
@@ -57,7 +58,7 @@ public class WeatherService {
 
             weatherInfo = new WeatherInfo(cityName, weatherCondition, currentTime);
 
-        } catch (IOException e) {
+        } catch (ApiException e) {
             logger1.error("Error when fetching weather data from API: " + e.getMessage());
         }
         return weatherInfo;
@@ -78,7 +79,13 @@ public class WeatherService {
 //            weathers = (List<WeatherInfo>) inputStream.readObject();
             Object object = inputStream.readObject();
             if (object instanceof ArrayList<?>) {
-                weathers = (ArrayList<WeatherInfo>) object;
+                for (Object obj : (ArrayList<?>) object) {
+                    if (obj instanceof WeatherInfo) {
+                        weathers.add((WeatherInfo) obj);
+                    }
+                }
+            }else{
+                logger1.error("Error: Object read from file is not an ArrayList<WeatherInfo>");
             }
         } catch (IOException | ClassNotFoundException e) {
             logger1.error("Error when reading weather data from the file: " + e.getMessage());

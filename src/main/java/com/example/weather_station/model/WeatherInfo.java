@@ -1,9 +1,10 @@
 package com.example.weather_station.model;
 
 import lombok.Data;
+import org.threeten.bp.LocalDateTime;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+
 
 @Data
 public class WeatherInfo implements Serializable {
@@ -17,7 +18,4 @@ public class WeatherInfo implements Serializable {
         this.localtime = localtime;
     }
 
-    public LocalDateTime getLocalTime() {
-        return localtime;
-    }
 }
