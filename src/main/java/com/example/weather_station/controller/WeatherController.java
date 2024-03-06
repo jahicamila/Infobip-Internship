@@ -12,7 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/weather")
-public class WeatherController {
+public class
+WeatherController {
 
     private static final Logger logger2 = LoggerFactory.getLogger("info");
     private final WeatherService weatherService;

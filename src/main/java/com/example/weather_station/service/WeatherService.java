@@ -40,9 +40,9 @@ public class WeatherService {
         try {
             ApiClient apiClient = new ApiClient();
             apiClient.setBasePath(weatherApiURI);
-            ApiKeyAuth ApiKeyAuth = (ApiKeyAuth) apiClient.getAuthentication("ApiKeyAuth");
-            ApiKeyAuth.setApiKey(weatherApiKey);
-//            ApiKeyAuth.setApiKeyPrefix("Token");
+            ApiKeyAuth apiKeyAuth = (ApiKeyAuth) apiClient.getAuthentication("ApiKeyAuth");
+            apiKeyAuth.setApiKey(weatherApiKey);
+//            apiKeyAuth.setApiKeyPrefix("Token");
 
             ApisApi apiInstance = new ApisApi(apiClient);
             String q = "Sarajevo";
@@ -59,7 +59,11 @@ public class WeatherService {
             weatherInfo = new WeatherInfo(cityName, weatherCondition, currentTime);
 
         } catch (ApiException e) {
-            logger1.error("Error when fetching weather data from API: " + e.getMessage());
+            logger1.error(String.valueOf(e.getCode()));
+            logger1.error(e.getResponseHeaders().toString());
+            logger1.error(e.getResponseBody());
+
+            //logger1.error("Error when fetching weather data from API: " + e.getMessage());
         }
         return weatherInfo;
     }
