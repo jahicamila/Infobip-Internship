@@ -22,10 +22,4 @@ public class WeatherInfo implements Serializable {
     @NonNull
     private LocalDateTime localtime;
 
-    public WeatherInfo(Location location, Current current, LocalDateTime localtime){
-        this.location = location;
-        this.weatherCondition = weatherCondition;
-        this.localtime = localtime;
-    }
-
 }

@@ -58,11 +58,7 @@ public class WeatherService {
 
             Weather weatherResponse = objectMapper.readValue(objectMapper.writeValueAsString(object), Weather.class);
 
-            Location location = weatherResponse.getLocation();
-            Current weatherCondition = weatherResponse.getCurrent();
-            LocalDateTime localtime = LocalDateTime.now();
-
-            weatherInfo = new WeatherInfo(location, weatherCondition, localtime);
+            weatherInfo = new WeatherInfo(weatherResponse.getLocation().getName(), weatherResponse.getCurrent().getCondition().getText(), LocalDateTime.now());
 
         } catch (ApiException e) {
             throw new MyException("Exception details");
