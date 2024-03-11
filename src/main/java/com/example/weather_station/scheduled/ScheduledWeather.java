@@ -1,5 +1,6 @@
 package com.example.weather_station.scheduled;
 
+import com.example.weather_station.model.MyException;
 import com.example.weather_station.model.WeatherInfo;
 import com.example.weather_station.service.WeatherService;
 import org.slf4j.Logger;
@@ -15,21 +16,26 @@ import java.io.IOException;
 @EnableScheduling
 public class ScheduledWeather {
 
-    private static final Logger logger1 = LoggerFactory.getLogger("error");
+    private static final Logger errorLogger = LoggerFactory.getLogger("error");
 
     private final WeatherService weatherService;
 
-    public ScheduledWeather(WeatherService weatherService){
+    public ScheduledWeather(WeatherService weatherService) {
         this.weatherService = weatherService;
     }
 
     @Scheduled(fixedRate = 10000)
     public void updateWeatherData() {
         try {
-            WeatherInfo weatherInfo = weatherService.fetchWeatherData();
-            weatherService.writeWeatherData(weatherInfo);
-        } catch (IOException | InterruptedException e) {
-            logger1.error("Error when updating weather data from API: " + e.getMessage());
+            WeatherInfo weatherInfo = weatherService.fetchWeatherDataFromAPI();
+            weatherService.writeWeatherDataToFile(weatherInfo);
+        } catch (IOException e) {
+            errorLogger.error("Error when updating weather data from API: " + e.getMessage());
+        } catch (InterruptedException e) {
+            errorLogger.error("Process execution was interrupted");
+        }
+        catch(MyException me){
+            errorLogger.error(String.valueOf(me));
         }
     }
 }

@@ -1,12 +1,16 @@
 package com.example.weather_station.service;
 
+import com.example.weather_station.model.MyException;
 import com.example.weather_station.model.WeatherInfo;
 import com.example.weather_station.model.Weather;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.Configuration;
 import io.swagger.client.api.ApisApi;
 import io.swagger.client.auth.ApiKeyAuth;
+import io.swagger.client.model.Current;
+import io.swagger.client.model.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,8 +24,13 @@ import java.util.List;
 @Service
 public class WeatherService {
 
-    private static final Logger logger1 = LoggerFactory.getLogger("error");
-    private static final Logger logger2 = LoggerFactory.getLogger("info");
+    private static final Logger errorLogger = LoggerFactory.getLogger("error");
+
+    private ObjectMapper objectMapper;
+
+    public WeatherService(ObjectMapper mapper) {
+        objectMapper = mapper;
+    }
 
     @Value("${weather.filepath}")
     private String filepath;
@@ -32,14 +41,11 @@ public class WeatherService {
     @Value("${weather.api.key}")
     private String weatherApiKey;
 
-    private final List<WeatherInfo> weatherInfoList = new ArrayList<>();
 
-
-    public WeatherInfo fetchWeatherData()  throws IOException, InterruptedException{
+    public WeatherInfo fetchWeatherDataFromAPI() throws IOException, InterruptedException, MyException {
         WeatherInfo weatherInfo = null;
         try {
             ApiClient apiClient = new ApiClient();
-            apiClient.setBasePath(weatherApiURI);
             ApiKeyAuth apiKeyAuth = (ApiKeyAuth) apiClient.getAuthentication("ApiKeyAuth");
             apiKeyAuth.setApiKey(weatherApiKey);
 //            apiKeyAuth.setApiKeyPrefix("Token");
@@ -48,36 +54,33 @@ public class WeatherService {
             String q = "Sarajevo";
             String lang = "en";
 
-            Weather weather = (Weather) apiInstance.realtimeWeather(q, lang);
+            Object object = apiInstance.realtimeWeather(q, lang);
 
-            //logger2.info("API Response: {}", weatherResponse.body());
+            Weather weatherResponse = objectMapper.readValue(objectMapper.writeValueAsString(object), Weather.class);
 
-            String cityName = weather.getLocation().getName();
-            String weatherCondition = weather.getCurrent().getCondition().getText();
-            LocalDateTime currentTime = LocalDateTime.now();
+            Location location = weatherResponse.getLocation();
+            Current weatherCondition = weatherResponse.getCurrent();
+            LocalDateTime localtime = LocalDateTime.now();
 
-            weatherInfo = new WeatherInfo(cityName, weatherCondition, currentTime);
+            weatherInfo = new WeatherInfo(location, weatherCondition, localtime);
 
         } catch (ApiException e) {
-            logger1.error(String.valueOf(e.getCode()));
-            logger1.error(e.getResponseHeaders().toString());
-            logger1.error(e.getResponseBody());
-
-            //logger1.error("Error when fetching weather data from API: " + e.getMessage());
+            throw new MyException("Exception details");
         }
         return weatherInfo;
     }
 
-    public void writeWeatherData(WeatherInfo weatherInfo) {
+    public void writeWeatherDataToFile(WeatherInfo weatherInfo) {
+        List<WeatherInfo> weatherInfoList = readWeatherDataFromFile();
         weatherInfoList.add(weatherInfo);
         try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(filepath))) {
             outputStream.writeObject(weatherInfoList);
         } catch (IOException e) {
-            logger1.error("Error when writing weather data to the file: " + e.getMessage());
+            errorLogger.error("Error when writing weather data to the file: " + e.getMessage());
         }
     }
 
-    public List<WeatherInfo> readWeatherData() {
+    public List<WeatherInfo> readWeatherDataFromFile() {
         List<WeatherInfo> weathers = new ArrayList<>();
         try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(filepath))) {
 //            weathers = (List<WeatherInfo>) inputStream.readObject();
@@ -88,11 +91,11 @@ public class WeatherService {
                         weathers.add((WeatherInfo) obj);
                     }
                 }
-            }else{
-                logger1.error("Error: Object read from file is not an ArrayList<WeatherInfo>");
+            } else {
+                errorLogger.error("Error: Object read from file is not an ArrayList<WeatherInfo>");
             }
         } catch (IOException | ClassNotFoundException e) {
-            logger1.error("Error when reading weather data from the file: " + e.getMessage());
+            errorLogger.error("Error when reading weather data from the file: " + e.getMessage());
         }
         return weathers;
     }
