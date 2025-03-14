@@ -12,10 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/weather")
-public class
-WeatherController {
+public class WeatherController {
 
     private static final Logger infoLogger = LoggerFactory.getLogger("info");
+
     private final WeatherService weatherService;
 
     public WeatherController(WeatherService weatherService) {
@@ -26,10 +26,6 @@ WeatherController {
     public List<WeatherInfo> getWeatherData() {
         infoLogger.info("/GET/weather");
         List<WeatherInfo> allWeatherData = weatherService.readWeatherDataFromFile();
-        if (allWeatherData.size() > 2) {
-            return allWeatherData.subList(allWeatherData.size() - 2, allWeatherData.size());
-        } else {
-            return allWeatherData;
-        }
+        return (allWeatherData.size() > 2) ? allWeatherData.subList(allWeatherData.size() - 2, allWeatherData.size()) : allWeatherData;
     }
 }

@@ -30,11 +30,10 @@ public class ScheduledWeather {
             WeatherInfo weatherInfo = weatherService.fetchWeatherDataFromAPI();
             weatherService.writeWeatherDataToFile(weatherInfo);
         } catch (IOException e) {
-            errorLogger.error("Error when updating weather data from API: " + e.getMessage());
+            errorLogger.error("Error when updating weather data from API: {}", e.getMessage());
         } catch (InterruptedException e) {
             errorLogger.error("Process execution was interrupted");
-        }
-        catch(MyException me){
+        } catch (MyException me) {
             errorLogger.error(String.valueOf(me));
         }
     }
