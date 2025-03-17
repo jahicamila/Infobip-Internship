@@ -26,16 +26,12 @@ The application automatically fetches weather data every hour and stores it in a
 
 Use the GET /weather endpoint to retrieve weather data for the past two hours.
 
-### Example Response
-The GET /weather endpoint returns filtered weather data in the following format:
-
 ```
 http://localhost:8080/weather
 ```
 
-http://api.weatherapi.com/v1/current.json?key=79dcb7239b0b4d7daa8112246242202&q=Sarajevo
-
-
+### Example Response
+The GET /weather endpoint returns filtered weather data in the following format:
 
 ```
 [
