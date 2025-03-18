@@ -24,7 +24,7 @@ public class ScheduledWeather {
         this.weatherService = weatherService;
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 3600000)
     public void updateWeatherData() {
         try {
             WeatherInfo weatherInfo = weatherService.fetchWeatherDataFromAPI();
