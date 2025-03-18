@@ -9,13 +9,13 @@ Data Storage: Stores the fetched weather data in a file for historical reference
 Custom API Endpoint: Provides a GET /weather endpoint to retrieve weather data for the past two hours.
 
 ## Technologies Used
-Programming Language: Java
+ - Programming Language: Java
 
-API: [weatherapi.com](https://www.weatherapi.com/)
+ - API: [weatherapi.com](https://www.weatherapi.com/)
 
-Web Framework: Spring Boot
+ - Web Framework: Spring Boot
 
-Data Storage: Local file storage (JSON)
+ - Data Storage: Local file storage (JSON)
 
 ## Usage
 Fetching Weather Data:
