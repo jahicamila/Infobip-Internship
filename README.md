@@ -38,42 +38,12 @@ The GET /weather endpoint returns filtered weather data in the following format:
     {
         "cityName": "Sarajevo",
         "weatherCondition": "Partly cloudy",
-        "localtime": {
-            "nano": 496000000,
-            "year": 2025,
-            "monthValue": 3,
-            "dayOfMonth": 17,
-            "hour": 14,
-            "minute": 54,
-            "second": 56,
-            "month": "MARCH",
-            "dayOfWeek": "MONDAY",
-            "dayOfYear": 76,
-            "chronology": {
-                "id": "ISO",
-                "calendarType": "iso8601"
-            }
-        }
+        "localtime": "2025-03-18T11:53:16.235141299"
     },
     {
         "cityName": "Sarajevo",
         "weatherCondition": "Partly cloudy",
-        "localtime": {
-            "nano": 915000000,
-            "year": 2025,
-            "monthValue": 3,
-            "dayOfMonth": 17,
-            "hour": 14,
-            "minute": 55,
-            "second": 5,
-            "month": "MARCH",
-            "dayOfWeek": "MONDAY",
-            "dayOfYear": 76,
-            "chronology": {
-                "id": "ISO",
-                "calendarType": "iso8601"
-            }
-        }
+        "localtime": "2025-03-18T12:53:15.897546119"
     }
 ]
 ```
